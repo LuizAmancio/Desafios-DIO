@@ -23,10 +23,10 @@ public class ContaTerminal {
 		String msg = "Olá "+nome+", obrigado por criar uma conta em nosso banco!"
 				+ "\r\nAgência: "+agencia
 				+ "\r\nConta: "+numero
-				+ "\r\nSaldo disponível: "+saldo;
+				+ "\r\nSaldo disponível: R$"+saldo;
 		
 		System.out.println(msg);
-
+		scanner.close();
 	}
 
 }
