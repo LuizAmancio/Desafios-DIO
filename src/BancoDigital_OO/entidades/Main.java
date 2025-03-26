@@ -87,43 +87,7 @@ public class Main {
 				break;
 			}
 			case 3: {
-				
-				System.out.println("------ Conta Corrente de "+cc.getCliente().getNome()+" ------"
-						+ "\r\nQual nome do titular da conta que deseja transferir?");
-				String nome = scanner.next();
-				
-				System.out.println("------ Conta Corrente de "+cc.getCliente().getNome()+" ------"
-						+ "\r\nQual CPF do titular da conta que deseja transferir?");
-				String cpf = scanner.next();
-				
-				Cliente cliente = new Cliente(nome, cpf, 50);
-				
-				System.out.println("------ Conta Corrente de "+cc.getCliente().getNome()+" ------"
-						+ "\r\nQual valor que deseja transferir para "+cliente.getNome()+"?");
-				double valor = scanner.nextDouble();
-				
-				System.out.println("------ Conta Corrente de "+cc.getCliente().getNome()+" ------"
-						+ "\r\nQual tipo de conta que deseja transferir?\r\n1 - Corrente\r\n2 - poupança");
-				int tpConta = scanner.nextInt();
-				
-				Conta conta = null;
-				
-				switch (tpConta) {
-				case 1: {
-					conta = new ContaCorrente(ContaEnum.AGENCIA_PADRAO.getCodigo(), 500, cliente, 3500);
-					break;
-				}
-				case 2: {
-					conta = new ContaPoupanca(ContaEnum.AGENCIA_PADRAO.getCodigo(), 500, cliente);
-					break;
-				}
-				default:
-					continuar = false;
-				}
-				
-				cc.transferir(valor, conta);
-				continuar = false;
-				break;
+				realizarTransferencia(scanner, cc);
 			}
 			case 0: {
 				continuar = false;
@@ -136,7 +100,7 @@ public class Main {
 	}
 	
 	public static void executarCP(Scanner scanner, Conta cp) {
-boolean continuar = true;
+		boolean continuar = true;
 		
 		while(continuar) {
 			System.out.println("------ Conta Poupança de "+cp.getCliente().getNome()+" ------"
@@ -165,41 +129,7 @@ boolean continuar = true;
 				break;
 			}
 			case 3: {
-				
-				System.out.println("------ Conta Poupança de "+cp.getCliente().getNome()+" ------"
-						+ "\r\nQual nome do titular da conta que deseja transferir?");
-				String nome = scanner.next();
-				
-				System.out.println("------ Conta Poupança de "+cp.getCliente().getNome()+" ------"
-						+ "\r\nQual CPF do titular da conta que deseja transferir?");
-				String cpf = scanner.next();
-				
-				Cliente cliente = new Cliente(nome, cpf, 50);
-				
-				System.out.println("------ Conta Poupança de "+cp.getCliente().getNome()+" ------"
-						+ "\r\nQual valor que deseja transferir para "+cliente.getNome()+"?");
-				double valor = scanner.nextDouble();
-				
-				System.out.println("------ Conta Poupança de "+cp.getCliente().getNome()+" ------"
-						+ "\r\nQual tipo de conta que deseja transferir?\r\n1 - Corrente\r\n2 - poupança");
-				int tpConta = scanner.nextInt();
-				
-				Conta conta = null;
-				
-				switch (tpConta) {
-				case 1: {
-					conta = new ContaCorrente(ContaEnum.AGENCIA_PADRAO.getCodigo(), 500, cliente, 3500);
-					break;
-				}
-				case 2: {
-					conta = new ContaPoupanca(ContaEnum.AGENCIA_PADRAO.getCodigo(), 500, cliente);
-					break;
-				}
-				default:
-					continuar = false;
-				}
-				
-				cp.transferir(valor, conta);
+				realizarTransferencia(scanner, cp);
 			}
 			case 0: {
 				continuar = false;
@@ -208,6 +138,42 @@ boolean continuar = true;
 				System.out.println("Selecione opção válida\r\n");
 			}
 		}
+	}
+	
+	public static void realizarTransferencia(Scanner scanner, Conta contaOrigem) {
+		System.out.println("------ Conta de " + contaOrigem.getCliente().getNome() + " ------"
+				+ "\r\nQual nome do titular da conta que deseja transferir?");
+		String nome = scanner.next();
+		
+		System.out.println("------ Conta de " + contaOrigem.getCliente().getNome() + " ------"
+				+ "\r\nQual CPF do titular da conta que deseja transferir?");
+		String cpf = scanner.next();
+		
+		Cliente clienteDestino = new Cliente(nome, cpf, 50);
+		
+		System.out.println("------ Conta de " + contaOrigem.getCliente().getNome() + " ------"
+				+ "\r\nQual valor deseja transferir para " + clienteDestino.getNome() + "?");
+		double valorTransferencia = scanner.nextDouble();
+		
+		System.out.println("------ Conta de " + contaOrigem.getCliente().getNome() + " ------"
+				+ "\r\nQual tipo de conta deseja transferir?\r\n1 - Corrente\r\n2 - Poupança");
+		int tipoConta = scanner.nextInt();
+		
+		Conta contaDestino = null;
+		
+		switch (tipoConta) {
+		case 1:
+			contaDestino = new ContaCorrente(ContaEnum.AGENCIA_PADRAO.getCodigo(), 500, clienteDestino, 3500);
+			break;
+		case 2:
+			contaDestino = new ContaPoupanca(ContaEnum.AGENCIA_PADRAO.getCodigo(), 500, clienteDestino);
+			break;
+		default:
+			System.out.println("Tipo de conta inválido");
+			return;
+		}
+		
+		contaOrigem.transferir(valorTransferencia, contaDestino);
 	}
 
 }
