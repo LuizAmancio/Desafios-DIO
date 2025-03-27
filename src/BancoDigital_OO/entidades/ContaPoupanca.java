@@ -62,5 +62,10 @@ public class ContaPoupanca extends Conta {
 		
 		return false;
 	}
+	
+	@Override
+	public String getTipoConta() {
+		return "Poupança";
+	}
 
 }

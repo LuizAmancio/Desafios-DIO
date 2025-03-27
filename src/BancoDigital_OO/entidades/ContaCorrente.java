@@ -52,6 +52,9 @@ public class ContaCorrente extends Conta {
 		super.saldo += valor;
 		if(limiteUtilizado > 0) {
 			limiteUtilizado -= valor;
+			if(limiteUtilizado > limite) {
+				limiteUtilizado =0;
+			}
 		}
 		
 		System.out.println("Deposito realizado!!"
@@ -105,5 +108,9 @@ public class ContaCorrente extends Conta {
 	public double getLimiteDisponivel() {
 		return limite - limiteUtilizado;
 	}
-	
+
+	@Override
+	public String getTipoConta() {
+		return "Corrente";
+	}
 }

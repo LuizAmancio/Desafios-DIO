@@ -1,11 +1,13 @@
 package BancoDigital_OO.entidades;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import BancoDigital_OO.enums.ContaEnum;
 
 public class Main {
 
+	private final static Scanner scanner = new Scanner(System.in);
 	public static void main(String[] args) {
 		
 		Cliente francisco =  new Cliente("Francisco", "120.223.123-00", 42);
@@ -14,150 +16,92 @@ public class Main {
 		
 		Conta cp = new ContaPoupanca(ContaEnum.AGENCIA_PADRAO.getCodigo(), 250, francisco);
 		
-		Scanner scanner = new Scanner(System.in);
-		
-		executar(scanner,cc,cp);
+		executar(cc,cp);
 		
 		scanner.close();
 
 	}
 	
-	public static void executar(Scanner scanner, Conta cc, Conta cp) {
-		System.out.println("Selecione o tipo de conta que deseja utilizar:"
-				+ "\r\n1 - Conta Poupança\r\n"
-				+ "2 - Conta Corrente\r\n"
-				+ "0 - Sair");
+	public static void executar(Conta cc, Conta cp) {
 		
-		int conta = scanner.nextInt();
+		int conta = getIntValue("Selecione o tipo de conta que deseja utilizar:"
+								+ "\r\n1 - Conta Poupança\r\n"
+								+ "2 - Conta Corrente\r\n"
+								+ "0 - Sair");
 		
 		switch (conta) {
-		case 1: {
-			executarCP(scanner, cp);
-			break;
-		}
-		case 2: {
-			executarCC(scanner, cc);
-			break;
-		}
-		case 0: {
-			System.exit(0);
-		}
-		default:
-			System.out.println("Selecione opção válida\r\n");
-			executar(scanner, cc, cp);
+			case 1 -> executarOperacao(cp);
+			case 2 -> executarOperacao(cc);
+			case 0 -> System.exit(0);
+			default -> System.out.println("Selecione opção válida\r\n");
 		}
 		
-		System.out.println("\r\nDeseja realizar nova operação?\r\n1- Sim\r\n2 - Não");
-		int repetir = scanner.nextInt();
-		if(repetir == 1) {
-			executar(scanner, cc, cp);
+		if(getIntValue("\r\nDeseja realizar nova operação?\r\n1- Sim\r\n2 - Não") == 1) {
+			executar(cc, cp);
 		}
-		
 	}
 	
-	public static void executarCC(Scanner scanner, Conta cc) {
-		boolean continuar = true;
-		
-		while(continuar) {
-			System.out.println("------ Conta Corrente de "+cc.getCliente().getNome()+" ------"
-					+ "\r\nSelecione a operação desejada:"
-					+ "\r\n1 - Sacar"
-					+ "\r\n2 - Depositar"
-					+ "\r\n3 - Transferir"
-					+ "\r\n0 - Sair");
+	public static void executarOperacao(Conta conta) {
+		boolean continua = true;
+		while(continua) {
+
+			int op = getIntValue("------ Conta "+conta.getTipoConta()+" de "+conta.getCliente().getNome()+" ------"
+								+ "\r\nSelecione a operação desejada:"
+								+ "\r\n1 - Sacar"
+								+ "\r\n2 - Depositar"
+								+ "\r\n3 - Transferir"
+								+ "\r\n0 - Sair");
 			
-			int op = scanner.nextInt();
-			
-			switch (op) {
-			case 1: {
-				
-				System.out.println("------ Conta Corrente de "+cc.getCliente().getNome()+" ------"
-						+ "\r\nQual valor que deseja sacar?");
-				double valor = scanner.nextDouble();
-				cc.sacar(valor);
-				continuar = false;
-				break;
-			}
-			case 2: {
-				System.out.println("------ Conta Corrente de "+cc.getCliente().getNome()+" ------"
-						+ "\r\nQual valor que deseja depositar?");
-				double valor = scanner.nextDouble();
-				cc.depositar(valor);
-				continuar = false;
-				break;
-			}
-			case 3: {
-				realizarTransferencia(scanner, cc);
-			}
-			case 0: {
-				continuar = false;
-				break;
-			}
-			default:
-				System.out.println("Selecione opção válida\r\n");
+			switch (op) {	
+				case 1 -> {
+					sacar(conta);
+					continua = false;
+					break; 
+				}
+				case 2 -> {
+					depositar(conta);
+					continua = false;
+					break; 
+				}
+				case 3 -> {
+					realizarTransferencia(conta);
+					continua = false;
+					break;
+				}
+				case 0 -> {
+					System.exit(0); 
+				}
 			}
 		}
 	}
 	
-	public static void executarCP(Scanner scanner, Conta cp) {
-		boolean continuar = true;
-		
-		while(continuar) {
-			System.out.println("------ Conta Poupança de "+cp.getCliente().getNome()+" ------"
-					+ "\r\nSelecione a operação desejada:"
-					+ "\r\n1 - Sacar"
-					+ "\r\n2 - Depositar"
-					+ "\r\n3 - Transferir"
-					+ "0 - Sair");
-			
-			int op = scanner.nextInt();
-			
-			switch (op) {
-			case 1: {
-				
-				System.out.println("------ Conta Poupança de "+cp.getCliente().getNome()+" ------"
-						+ "\r\nQual valor que deseja sacar?");
-				double valor = scanner.nextDouble();
-				cp.sacar(valor);
-				break;
-			}
-			case 2: {
-				System.out.println("------ Conta Poupança de "+cp.getCliente().getNome()+" ------"
-						+ "\r\nQual valor que deseja depositar?");
-				double valor = scanner.nextDouble();
-				cp.depositar(valor);
-				break;
-			}
-			case 3: {
-				realizarTransferencia(scanner, cp);
-			}
-			case 0: {
-				continuar = false;
-			}
-			default:
-				System.out.println("Selecione opção válida\r\n");
-			}
-		}
+	public static void sacar(Conta conta) {
+		double valor = getDoubleValue("------ Conta "+conta.getTipoConta()+" de "+conta.getCliente().getNome()+" ------"
+										+ "\r\nQual valor que deseja sacar?");
+		conta.sacar(valor);
 	}
 	
-	public static void realizarTransferencia(Scanner scanner, Conta contaOrigem) {
-		System.out.println("------ Conta de " + contaOrigem.getCliente().getNome() + " ------"
-				+ "\r\nQual nome do titular da conta que deseja transferir?");
-		String nome = scanner.next();
+	public static void depositar(Conta conta) {
+		double valor = getDoubleValue("------ Conta "+conta.getTipoConta()+" de "+conta.getCliente().getNome()+" ------"
+										+ "\r\nQual valor que deseja depositar?");
+		conta.depositar(valor);
+	}
+	
+	public static void realizarTransferencia(Conta contaOrigem) {
 		
-		System.out.println("------ Conta de " + contaOrigem.getCliente().getNome() + " ------"
-				+ "\r\nQual CPF do titular da conta que deseja transferir?");
-		String cpf = scanner.next();
+		String nome = getStringValue("------ Conta de " + contaOrigem.getCliente().getNome() + " ------"
+									+ "\r\nQual nome do titular da conta que deseja transferir?");
+		
+		String cpf = getCpfValue("------ Conta de " + contaOrigem.getCliente().getNome() + " ------"
+									+ "\r\nQual CPF do titular da conta que deseja transferir?");
 		
 		Cliente clienteDestino = new Cliente(nome, cpf, 50);
 		
-		System.out.println("------ Conta de " + contaOrigem.getCliente().getNome() + " ------"
-				+ "\r\nQual valor deseja transferir para " + clienteDestino.getNome() + "?");
-		double valorTransferencia = scanner.nextDouble();
+		double valorTransferencia = getDoubleValue("------ Conta de " + contaOrigem.getCliente().getNome() + " ------"
+													+ "\r\nQual valor deseja transferir para " + clienteDestino.getNome() + "?");
 		
-		System.out.println("------ Conta de " + contaOrigem.getCliente().getNome() + " ------"
-				+ "\r\nQual tipo de conta deseja transferir?\r\n1 - Corrente\r\n2 - Poupança");
-		int tipoConta = scanner.nextInt();
+		int tipoConta = getIntValue("------ Conta de " + contaOrigem.getCliente().getNome() + " ------"
+									+ "\r\nQual tipo de conta deseja transferir?\r\n1 - Corrente\r\n2 - Poupança");
 		
 		Conta contaDestino = null;
 		
@@ -174,6 +118,75 @@ public class Main {
 		}
 		
 		contaOrigem.transferir(valorTransferencia, contaDestino);
+	}
+	
+	public static int getIntValue(String msg) {
+		while (true) {
+	        try {
+	            System.out.println(msg);
+	            int value = scanner.nextInt();
+	            
+	            return value;
+	            
+	        } catch (InputMismatchException e) {
+	            System.out.println("Entrada inválida! Por favor, insira um número válido");
+	            scanner.nextLine();
+	        }
+	    }
+	}
+	
+	public static double getDoubleValue(String msg) {
+		while (true) {
+			try {
+				System.out.println(msg);
+				double value = scanner.nextDouble();
+				
+				return value;
+				
+			} catch (InputMismatchException e) {
+				System.out.println("Entrada inválida! Por favor, insira um valor válido");
+				 scanner.nextLine();
+			}
+		}
+	}
+	
+	public static String getStringValue(String msg) {
+		while (true) {
+			try {
+				System.out.println(msg);
+				String value = scanner.next();
+				
+				if (value.matches("[^0-9]+")) {
+				   return value;
+				} 
+				
+				System.out.println("Entrada inválida! Por favor, insira um nome válido");
+				
+			} catch (InputMismatchException e) {
+				System.out.println("Entrada inválida! Por favor, insira um nome válido");
+				 scanner.nextLine();
+			}
+		}
+	}
+	
+	public static String getCpfValue(String msg) {
+		while (true) {
+			try {
+				System.out.println(msg);
+				String cpf = scanner.next();
+				
+				if (cpf.matches("[0-9.-]+")
+						&& cpf.replace(".", "").replace("-", "").length() == 11) {
+					return cpf;
+				} 
+				
+				System.out.println("Entrada inválida! Por favor, insira um CPF válido");
+				
+			} catch (InputMismatchException e) {
+				System.out.println("Entrada inválida! Por favor, insira um CPF válido");
+				scanner.nextLine();
+			}
+		}
 	}
 
 }
