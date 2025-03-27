@@ -1,8 +1,12 @@
-package BancoDigital_OO.entidades;
+package BancoDigital_OO;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+import BancoDigital_OO.entidades.Cliente;
+import BancoDigital_OO.entidades.Conta;
+import BancoDigital_OO.entidades.ContaCorrente;
+import BancoDigital_OO.entidades.ContaPoupanca;
 import BancoDigital_OO.enums.ContaEnum;
 
 public class Main {
